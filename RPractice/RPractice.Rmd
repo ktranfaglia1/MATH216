@@ -1,0 +1,75 @@
+---
+title: "Practice Document"
+author: "Kyle Tranfaglia"
+date: "2023-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE,message=FALSE)
+
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(flextable)
+library(tidyr)
+library(knitr)
+library(tidyverse)
+library(extraDistr)
+```
+
+# Example 1
+
+Example 1 Heights in a group of men are normally distributed with mean µ = 69 inches and variance σ\^2 = 9 inches. a. If a man from this group has a height of 63 inches, find the corresponding z-score. b. If the height of a man from this group has the z-score of 0.6, find the corresponding height. c. What is the probability that a random selected man from this group is taller than 72 inches? d. If a randomly selected man from this group is shorter than 20% of men from this group, what is his height?
+
+```{r}
+
+(63 - 69) / (sqrt(9))
+69 + 0.6*(sqrt(9))
+1- pnorm(q=72, mean=69, sd=3)
+qnorm(p=0.80, mean=69, sd=3)
+```
+
+# Example 2
+
+In a recent study, the Centers for Disease Control and Prevention reported that diastolic blood pressures (in mmHg) of adult women in the United States are approximately normally distributed with mean 80.5 and standard deviation 9.9. a. What proportion of women have blood pressures between 75 and 90? b. A diastolic blood pressure greater than 90 is classified as hypertension (high blood pressure). What proportion of women have hypertension? c. If an event has a probability that is less than 5%, we consider it as an unusual event. Is it unusual for a woman to have a blood pressure lower than 65? d. Find the 72th percentile of the women blood pressure. e. Between what two values are the middle 90% of the women blood pressures?
+
+```{r}
+
+pnorm(q=90, mean=80.5, sd=9.9) - pnorm(q=75, mean=80.5, sd=9.9)
+1 - pnorm(q=90, mean=80.5, sd=9.9)
+pnorm(q=65, mean=80.5, sd=9.9) # Not Unusual
+qnorm(p=0.72, mean=80.5, sd=9.9)
+qnorm(p=0.05, mean=80.5, sd=9.9) # Lower Bound
+qnorm(p=0.95, mean=80.5, sd=9.9) # Upper Bound
+```
+
+# Example 3
+
+The Real Estate Group NY reports that the mean monthly rent for a one-bedroom apartment without a doorman in Manhattan is \$2631. Assume the standard deviation is \$500. A real estate firm samples 100 apartments. a. What is the probability that the sample mean rent is greater than \$2700? b. What is the probability that the sample mean rent is between \$2500 and \$2600? c. Find the 60th percentile of the sample mean. d. Is it unusual if the sample mean were greater than \$2800? e. Is it unusual if a randomly selected individual apartment have a rent greater than \$2800?
+
+```{r}
+
+1 - pnorm(q=2700, mean=2631, sd=500/sqrt(100))
+pnorm(q=2600, mean=2631, sd=500/sqrt(100)) - pnorm(q=2500, mean=2631, sd=500/sqrt(100))
+qnorm(p=0.6, mean=2631, sd=500/sqrt(100))
+1-pnorm(q=2800, mean=2631, sd=500/sqrt(100)) # unusual
+1-pnorm(q=2800, mean=2631, sd=500)
+```
+
+# Example 4
+
+A Pew Research report indicated that 73% of teenagers aged 13-17 own smartphones. A random sample of 150 teenages is drawn. Let p!be the sample proportion of owning a smartphone. a. Find the mean µp!. b. Find the standard deviation σp!. c. Find the probability that more than 70% of the sampled teenagers own a smartphone. d. Find the probability that the proportion of the sampled teenagers who own a smartphone is between 0.76 and 0.80. e. Would it be unusual if less than 68% of the sampled teenagers owned smartphones?
+
+```{r}
+
+p <- 0.73
+
+p
+sqrt(p*(1-p)/150)
+1 - pnorm(q=0.70, mean=p, sd=0.03625)
+pnorm(q=0.80, mean=p, sd=0.03625) - pnorm(q=0.76, mean=p, sd=0.03625)
+pnorm(q=0.68, mean=p, sd=0.03625) # not unusual
+
+
+```
