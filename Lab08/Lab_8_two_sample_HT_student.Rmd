@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(BSDA)
 library(nortest)
+library(car)
 ```
 
 # Name: Kyle Tranfaglia
@@ -95,7 +96,7 @@ Diffs <- data8$Pulse1 - data8$Pulse2
 Diffs_R <- data8[data8$Ran==1,]$Pulse1 - data8[data8$Ran==1,]$Pulse2
 Diffs_NR <- data8[data8$Ran==2,]$Pulse1 - data8[data8$Ran==2,]$Pulse2
 Diffs_RandS <- data8[data8$Ran==1 & data8$Smokes==1,]$Pulse1 - data8[data8$Ran==1 & data8$Smokes==1,]$Pulse2
-DIffs_RandNS <- data8[data8$Ran==1 & data8$Smokes==2,]$Pulse1 - data8[data8$Ran==1 & data8$Smokes==2,]$Pulse2
+Diffs_RandNS <- data8[data8$Ran==1 & data8$Smokes==2,]$Pulse1 - data8[data8$Ran==1 & data8$Smokes==2,]$Pulse2
 
 Weight_M <- data8[data8$Sex==1,]$Weight
 Weight_M_S <- data8[data8$Sex==1 & data8$Smokes==1,]$Weight
@@ -165,6 +166,8 @@ A researcher now wants to look at the pulses of the running group before and aft
 
 ```{r}
 
+t.test(x=Diffs_R, mu=0, alternative = "less", conf.level = 0.95)
+
 ```
 
 ```         
@@ -184,6 +187,33 @@ All segment requiurments:
 2. Compute p-value
 3. Draw conclusion based on p-value using alpha=0.05
 4. Explain the menaing of the conclusion
+
+For Runners:
+
+1. Null: running in place does not change mean heart rate
+   Alternative: running in place increases mean heart rate
+  
+2. H0: mu_pulse2 = mu_pulse1 vs HA: mu_pulse2 > mu_pulse1
+
+3. Alpha = 0.05, it is the probability of making type 1 error. It is also the probability we use to define an unsual event.
+
+4. Since the sample size n = 35 >= 30, it is a large sample. Since we are not given the population standard deviation, sigma, we should use 1-sample t.
+
+5. If the computed p-value < alpha, we have sufficient evidence to reject H0 and to support HA. If the computed p-value >= alpha, we do not have sufficient evidence to reject H0 and we do not have sufficient evidence to support HA.
+
+p-value = probability of getting such a sample (or more extreme sample) if we assume H0 is true.
+
+6. Using R to compute the p-value = 6.324e-09 < 0.05 = alpha. This sample of 35 pulse data provides sufficient evidence to reject H0 and to support HA. 
+
+7. It means, the sample provides sufficient evidence to support the statement: "running in place increases mean heart rate."
+
+8. The above decision is possible to be an error
+
+   Type I error: reject H0 when it is true (p-value < alpha).
+   Type II error: failed to reject H0 when it is not true (p-value >= alpha).
+   
+   Since our decision is reject H0, it is possible to be a type I error with the      probability alpha = 0.05.
+   
 ```
 
 **End Assignment 3**
@@ -194,9 +224,35 @@ A researcher now wants to run the same hypothesis as before but with the non-run
 
 ```{r}
 
+t.test(x=Diffs_NR, mu=0, alternative = "less", conf.level = 0.95)
 ```
 
 ```         
+For Non-Runners:
+
+1. Null: running in place does not change mean heart rate
+   Alternative: running in place increases mean heart rate
+  
+2. H0: mu_pulse2 = mu_pulse1 vs HA: mu_pulse2 > mu_pulse1
+
+3. Alpha = 0.05, it is the probability of making type 1 error. It is also the probability we use to define an unsual event.
+
+4. Since the sample size n = 57 >= 30, it is a large sample. Since we are not given the population standard deviation, sigma, we should use 1-sample t.
+
+5. If the computed p-value < alpha, we have sufficient evidence to reject H0 and to support HA. If the computed p-value >= alpha, we do not have sufficient evidence to reject H0 and we do not have sufficient evidence to support HA.
+
+p-value = probability of getting such a sample (or more extreme sample) if we assume H0 is true.
+
+6. Using R to compute the p-value = 0.5754 > 0.05 = alpha. This sample of 57 pulse data does not provide sufficient evidence to reject H0 or to support HA. 
+
+7. It means, the sample does not provide sufficient evidence to support the statement: "running in place increases mean heart rate." nor reject "running in place does not change mean heart rate."
+
+8. The above decision is possible to be an error
+
+   Type I error: reject H0 when it is true (p-value < alpha).
+   Type II error: failed to reject H0 when it is not true (p-value >= alpha).
+   
+   Since our decision is to fail to reject H0, it is possible to be a type II error with the probability beta.
 ```
 
 **End Assignment 4**
@@ -206,10 +262,42 @@ A researcher now wants to run the same hypothesis as before but with the non-run
 Now among the runners there could be another factor that affects the average heart rate. This confounding factor could be smoking. Therefore the researcher wants to know does the mean heart rate of smokers increase after running in place? Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above. You may have a small sample size and it is non-normal you may have to use the Wilcoxon or Sign tests discussed in the previous lab.
 
 ```{r}
+# Check normality
+ad.test(Diffs_RandS)
+
+qqPlot(Diffs_RandS)
+
+# Data approximately normal - continue with 1-sample t test
+t.test(x=Diffs_RandS, mu=0, alternative = "less", conf.level = 0.95)
 
 ```
 
 ```         
+For Runners that Smoke:
+
+1. Null: running in place does not change mean heart rate of smokers
+   Alternative: running in place increases mean heart rate of smokers
+  
+2. H0: mu_pulse2 = mu_pulse1 vs HA: mu_pulse2 > mu_pulse1
+
+3. Alpha = 0.05, it is the probability of making type 1 error. It is also the probability we use to define an unsual event.
+
+4. Since the sample size n = 12 < 30, it is a small sample. So, we must determine if the sample is approximately normal. Using the Anderson-Darling test, we find that p-value = 0.9743 > 0.05 = Alpha. With this, considering the support from the qqplot which presents a graph resembling a normal distribution, we can say that the data set is approximately normal. Thus, since sigma is not know for the data set, we use a 1-sample t test.
+
+5. If the computed p-value < alpha, we have sufficient evidence to reject H0 and to support HA. If the computed p-value >= alpha, we do not have sufficient evidence to reject H0 and we do not have sufficient evidence to support HA.
+
+p-value = probability of getting such a sample (or more extreme sample) if we assume H0 is true.
+
+6. Using R to compute the p-value = 0.0008227 < 0.05 = alpha. This sample of 12 pulse data provides sufficient evidence to reject H0 or to support HA. 
+
+7. It means, the sample provides sufficient evidence to support the statement: "running in place increases mean heart rate for smokers."
+
+8. The above decision is possible to be an error
+
+   Type I error: reject H0 when it is true (p-value < alpha).
+   Type II error: failed to reject H0 when it is not true (p-value >= alpha).
+   
+   Since our decision is to reject H0, it is possible to be a type I error with the probability alpha = 0.05.
 ```
 
 **End Assignment 5**
@@ -219,10 +307,41 @@ Now among the runners there could be another factor that affects the average hea
 Now to make a comparison the next hypothesis would be does running in place increase the mean heart rate of non-smokers? Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above.
 
 ```{r}
+# Check normality
+ad.test(Diffs_RandNS)
 
+qqPlot(Diffs_RandNS)
+
+# Data approximately normal - continue with 1-sample t test
+t.test(x=Diffs_RandNS, mu=0, alternative = "less", conf.level = 0.95)
 ```
 
 ```         
+For Runners that do not Smoke:
+
+1. Null: running in place does not change mean heart rate of non-smokers
+   Alternative: running in place increases mean heart rate of non-smokers
+  
+2. H0: mu_pulse2 = mu_pulse1 vs HA: mu_pulse2 > mu_pulse1
+
+3. Alpha = 0.05, it is the probability of making type 1 error. It is also the probability we use to define an unsual event.
+
+4. Since the sample size n = 23 < 30, it is a small sample. So, we must determine if the sample is approximately normal. Using the Anderson-Darling test, we find that p-value = 0.05524 > 0.05 = Alpha. With this, considering the support from the qqplot which presents a graph resembling a normal distribution (although the resemblance is weak), we can say that the data set is approximately normal as we cannot reject that the data set is not normal. Thus, since sigma is not know for the data set, we use a 1-sample t test.
+
+5. If the computed p-value < alpha, we have sufficient evidence to reject H0 and to support HA. If the computed p-value >= alpha, we do not have sufficient evidence to reject H0 and we do not have sufficient evidence to support HA.
+
+p-value = probability of getting such a sample (or more extreme sample) if we assume H0 is true.
+
+6. Using R to compute the p-value = 1.113e-06 < 0.05 = alpha. This sample of 23 pulse data provides sufficient evidence to reject H0 or to support HA. 
+
+7. It means, the sample provides sufficient evidence to support the statement: "running in place increases mean heart rate for non-smokers."
+
+8. The above decision is possible to be an error
+
+   Type I error: reject H0 when it is true (p-value < alpha).
+   Type II error: failed to reject H0 when it is not true (p-value >= alpha).
+   
+   Since our decision is to reject H0, it is possible to be a type I error with the probability alpha = 0.05.
 ```
 
 **End Assignment 6**
@@ -233,9 +352,35 @@ Now a researcher is interested in the weights of the class. They want to determi
 
 ```{r}
 
+t.test(x=Weight_M, y = Weight_F, mu=0, alternative = "two.sided", conf.level = 0.95)
 ```
 
 ```         
+Male - Female weight difference analysis:
+
+1. Null: the weights of males and females do not differ
+   Alternative: the weights of males and females differ
+  
+2. H0: mu_pulse2 = mu_pulse1 vs HA: mu_pulse2 != mu_pulse1
+
+3. Alpha = 0.05, it is the probability of making type 1 error. It is also the probability we use to define an unsual event.
+
+4. Since the sample size n1 = 57 >= 30 and n2 = 35 >= 30, it is a large sample. However, since n1 != n2, these samples are not paired. Considering that the samples are not paired but the samples are large with an unkown sigma, we will use 2-sample t test.
+
+5. If the computed p-value < alpha, we have sufficient evidence to reject H0 and to support HA. If the computed p-value >= alpha, we do not have sufficient evidence to reject H0 and we do not have sufficient evidence to support HA.
+
+p-value = probability of getting such a sample (or more extreme sample) if we assume H0 is true.
+
+6. Using R to compute the p-value = 2.2e-16 < 0.05 = alpha. This sample of 57 male and 35 female weight data provides sufficient evidence to reject H0 or to support HA. 
+
+7. It means, the sample provides sufficient evidence to support the statement: "the weights of males and females differ."
+
+8. The above decision is possible to be an error
+
+   Type I error: reject H0 when it is true (p-value < alpha).
+   Type II error: failed to reject H0 when it is not true (p-value >= alpha).
+   
+   Since our decision is to reject H0, it is possible to be a type I error with the probability alpha = 0.05.
 ```
 
 **End Assignment 7**
@@ -245,10 +390,41 @@ Now a researcher is interested in the weights of the class. They want to determi
 Going a little deeper into the data a researcher thinks that smoking might have an effect on weight. The researcher wants to test the hypothesis about whether the mean weight of males who smoke is different from males who do not smoke. Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above. ( if using a non-parametric test remember to state the conclusion in terms of means and not medians)
 
 ```{r}
+# Check normality
+ad.test(Weight_M_S)
 
+qqPlot(Weight_M_S)
+
+# Data approximately normal - Continue with 2-sample t test
+t.test(x=Weight_M_S, y = Weight_M_NS, mu=0, alternative = "two.sided", conf.level = 0.95)
 ```
 
 ```         
+Male smokers - Male non-smokers weight difference analysis:
+
+1. Null: the weights of males smokers and male non-smokers do not differ
+   Alternative: the weights of males smokers and male non-smokers differ
+  
+2. H0: mu_pulse2 = mu_pulse1 vs HA: mu_pulse2 != mu_pulse1
+
+3. Alpha = 0.05, it is the probability of making type 1 error. It is also the probability we use to define an unsual event.
+
+4. Since the sample size n1 = 20 < 30 and n2 = 37 >= 30, we can not consider this a large sample. Although, the sample size of n2, male non-smokers is greater than 30, the sample size of n1 is less than 30. So, since n1 != n2 and the sample size of n1 is not large, we must test if the small sample n1, male smokers, is approximately normal. Using the Anderson-Darling test, we find that p-value = 0.6017 > 0.05 = Alpha. With this, considering the support from the qqplot which presents a graph resembling a normal distribution, we can say that the data set is approximately normal as we cannot reject that the data set is not normal. Thus, since sigma is not know for the data set, and we can say that n1 is approximately normal by Anderson-Darling test and n2 is approximately normal by CLT, we use a 2-sample t test.
+
+5. If the computed p-value < alpha, we have sufficient evidence to reject H0 and to support HA. If the computed p-value >= alpha, we do not have sufficient evidence to reject H0 and we do not have sufficient evidence to support HA.
+
+p-value = probability of getting such a sample (or more extreme sample) if we assume H0 is true.
+
+6. Using R to compute the p-value = 0.1834 > 0.05 = alpha. This sample of 20 male smokers and 37 male non-smokers weight data does not provide sufficient evidence to reject H0 nor to support HA. 
+
+7. It means, the sample does not provide sufficient evidence to support the statement: "the weights of males smokers and male non-smokers differ." nor to reject the statement "the weights of males smokers and male non-smokers do not differ."
+
+8. The above decision is possible to be an error
+
+   Type I error: reject H0 when it is true (p-value < alpha).
+   Type II error: failed to reject H0 when it is not true (p-value >= alpha).
+   
+   Since our decision is fail to reject H0, it is possible to be a type II error with the probability beta.
 ```
 
 **End Assignment 8**
@@ -258,11 +434,46 @@ Going a little deeper into the data a researcher thinks that smoking might have 
 The last hypothesis that the researcher want to test is whether the mean weight of females who smoke is different from females who do not smoke. Conduct the appropriate test to test this hypothesis and clearly state your conclusion following the 8 steps described above. ( if using a non-parametric test remember to state the conclusion in terms of means and not medians)
 
 ```{r}
+# Check normality for female smokers
+ad.test(Weight_F_S)
 
+qqPlot(Weight_F_S)
 
+# Check normality for female non-smokers
+ad.test(Weight_F_NS)
+
+qqPlot(Weight_F_NS)
+
+# Data approximately normal - Continue with 2-sample t test
+t.test(x=Weight_F_S, y = Weight_F_NS, mu=0, alternative = "two.sided", conf.level = 0.95)
 ```
 
 ```         
+Female smokers - Female non-smokers weight difference analysis:
+
+1. Null: the weights of females smokers and female non-smokers do not differ
+   Alternative: the weights of females smokers and female non-smokers differ
+  
+2. H0: mu_pulse2 = mu_pulse1 vs HA: mu_pulse2 != mu_pulse1
+
+3. Alpha = 0.05, it is the probability of making type 1 error. It is also the probability we use to define an unsual event.
+
+4. Since the sample size n1 = 8 < 30 and n2 = 27 < 30, we can not consider this a large sample. The sample size of n2, female non-smokers is less than 30 and the sample size of n1, female smokers is less than 30. So, since n1 != n2 and the sample size of n1 and n2 is not large, we must test if the samples are approximately normal. Using the Anderson-Darling test, we find that p-value = 0.867 > 0.05 = Alpha for n1, female smokers and p-value = 0.3744 > .05 for n2, female non-smokers. With this, considering the support from the qqplot which presents a graph resembling a normal distribution for both n1 and n2, we can say that both data sets are approximately normal as we cannot reject that the data sets are not normal. Thus, since sigma is not know for the data set, and we can say that n1 and n2 are approximately normal by Anderson-Darling test, we use a 2-sample t test.
+
+5. If the computed p-value < alpha, we have sufficient evidence to reject H0 and to support HA. If the computed p-value >= alpha, we do not have sufficient evidence to reject H0 and we do not have sufficient evidence to support HA.
+
+p-value = probability of getting such a sample (or more extreme sample) if we assume H0 is true.
+
+6. Using R to compute the p-value = 0.5281 > 0.05 = alpha. This sample of 8 female smokers and 27 female non-smokers weight data does not provide sufficient evidence to reject H0 nor to support HA. 
+
+7. It means, the sample does not provide sufficient evidence to support the statement: "the weights of females smokers and female non-smokers differ." nor to reject the statement "the weights of females smokers and female non-smokers do not differ."
+
+8. The above decision is possible to be an error
+
+   Type I error: reject H0 when it is true (p-value < alpha).
+   Type II error: failed to reject H0 when it is not true (p-value >= alpha).
+   
+   Since our decision is fail to reject H0, it is possible to be a type II error with the probability beta.
 ```
 
 **End Assignment 9**
@@ -272,6 +483,7 @@ The last hypothesis that the researcher want to test is whether the mean weight 
 Based on the hypotheses you have tested and there results write a concluding paragraph or more about your findings:
 
 ```         
+After conducting the 8 hypothesis test, we can draw some conclusions. We can say from the test that the average pulse of the class was greater the second time around than the first time. We can also say that running in place increases mean heart rate for runners but we can not say that running in place increases mean heart rate for non-runners. In analyzing how smoking impacts heart rate, from the hypothesis tests we can say that running in place increases mean heart rate for smokers and running in place increases mean heart rate for non-smokers. For male and female weight analysis, we can say from the hypothesis testing that the weights of males and females differ. In considering how smoking impacts male and female weight, we can not say that the weights of males smokers and male non-smokers do not differ or the weights of females smokers and female non-smokers do not differ as we could not reject that the weights of males smokers and male non-smokers do not differ or the weights of females smokers and female non-smokers do not differ. In conclusion, from the hypothesis tests, we can say that running in place increases mean heart rate for both smokers and non-smokers, male and female weights differ, and that smoking likely does not change the weight for males nor females.
 ```
 
 **End Conclusion Assignment**
