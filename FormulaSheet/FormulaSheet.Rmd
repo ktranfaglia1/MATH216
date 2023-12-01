@@ -570,6 +570,12 @@ tsum.test(mean.x=6.45,s.x=4,n.x=45,mu=6,alternative = 'greater',conf.level = .95
 
 ```
 
+# Contingency Table
+
+```{r}
+
+```
+
 # Quiz 2 Workspace
 
 ```{r}
