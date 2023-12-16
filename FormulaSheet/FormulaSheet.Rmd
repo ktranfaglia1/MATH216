@@ -570,10 +570,40 @@ tsum.test(mean.x=6.45,s.x=4,n.x=45,mu=6,alternative = 'greater',conf.level = .95
 
 ```
 
-# Contingency Table
+# Chi-Squared
 
 ```{r}
+# Perform Chi-Squared test on a data set
+chisq.test(x=c(218,497,425,157), p=c(0.185,0.392,0.412,0.011))
+# Perform Chi-Squared given the contigenency table
+tab1 <- matrix(c(24,9,13,289,100,565), nrow=2, ncol=3, byrow=TRUE)
+tab1
+chisq.test(tab1, correct=TRUE)
 
+
+```
+
+# Linear Regression
+
+```{r}
+# Get data
+data22 <- read.csv("FinalPrac22.csv")
+x <- data22$X
+y <- data22$Y
+# Fit a linear regression model. y ~ x: This formula notation specifies the relationship between the response variable (y) and the predictor variable (x). In a linear regression model, you are trying to model the relationship between the response variable and one or more predictor variables
+mod22<-lm(y~x)
+# Get detailed information about the fitted mode
+summary(mod22)
+# Performs an analysis of variance on the fitted model, comparing the fit of the model with the null hypothesis to assess the overall significance of the model.
+anova(mod22)
+# Compute confidence intervals for the estimated coefficients of a fitted model
+confint(mod22, level = 0.95)
+# Calculates the correlation between two numeric vectors x and y. Correlation is a statistical measure that quantifies the strength and direction of a linear relationship between two variables. The result ranges from -1 to 1: 1 indicates a perfect positive linear relationship, -1 indicates a perfect negative linear relationship, 0 indicates no linear relationship.
+cor(x,y)
+# Obtain predicted values from a model. In the context of linear regression models, the predict() function predicts the response variable for new or existing data
+predict(mod22, newData=data.frame(x=1.25), level = 0.94, interval = "confidence")
+# Get prediction interval
+predict(mod22, newData=data.frame(x=1.25), level = 0.94, interval = "predict")
 ```
 
 # Quiz 2 Workspace
@@ -697,7 +727,7 @@ tsum.test(mean.x=575.85,s.x=123.7903,n.x=20,mu=530,alternative = 'greater',conf.
 
 ```
 
-# Test 3 Practice Exam Workspace
+# Exam 3 Practice Workspace
 
 ```{r}
 # Question 1
@@ -748,4 +778,52 @@ t.test(question4Datax, mu=8.5, alternative = "two.sided", conf.level = 0.93)
 # Question 5
 zsum.test(mean.x=548, sigma.x=116, n.x=80, mu=525, alternative = "greater")
 zsum.test(mean.x=548, sigma.x=116, n.x=80, mu=525, alternative = "two.sided", conf.level=0.96)
+```
+
+# Exam 3 Workspace
+
+```{r}
+# Question 1
+Data1 <- c(564, 498, 259, 303, 300, 307)
+
+shapiro.test(Data1)
+qqPlot(Data1)
+
+t.test(Data1, mu=300, alternative = "greater", conf.level = 0.90)
+
+# Question 2
+Data2X <- c(104, 82, 102, 96, 129, 89, 114, 107, 89, 103)
+Data2Y <- c(103, 103, 91, 113, 102, 103, 92, 90, 114, 113)
+
+diff2 <- Data2X - Data2Y
+
+ad.test(diff2)
+qqPlot(diff2)
+
+t.test(diff2, mu=0, alternative = "two.sided", conf.level = 0.95)
+
+# Question 3
+Data3X <- c(67, 68, 78, 75, 84)
+Data3Y <- c(59, 63, 81, 74, 78)
+
+diff3 <- Data3X - Data3Y
+
+shapiro.test(diff3)
+qqPlot(diff3)
+
+t.test(diff3, mu=0, alternative = "less", conf.level = 0.95)
+t.test(diff3, mu=0, alternative = "two.sided", conf.level = 0.97)
+
+# Question 4
+QData4 <- read.csv("Exam3Prob4.csv")
+Data4 <- QData4$SampleData
+
+ad.test(Data4)
+qqPlot(Data4)
+
+t.test(Data4, mu=8.5, alternative = "two.sided", conf.level = 0.93)
+
+# Question 5
+zsum.test(mean.x=4.98, sigma.x=1.62, n.x=258, mu=4.7, alternative = "greater")
+zsum.test(mean.x=4.98, sigma.x=1.62, n.x=258, mu=4.7, alternative = "two.sided", conf.level=0.96)
 ```
