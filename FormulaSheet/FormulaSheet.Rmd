@@ -827,3 +827,72 @@ t.test(Data4, mu=8.5, alternative = "two.sided", conf.level = 0.93)
 zsum.test(mean.x=4.98, sigma.x=1.62, n.x=258, mu=4.7, alternative = "greater")
 zsum.test(mean.x=4.98, sigma.x=1.62, n.x=258, mu=4.7, alternative = "two.sided", conf.level=0.96)
 ```
+
+# Final Exam
+
+```{r}
+
+# Question 4
+x <- c(0, 1, 2, 3, 4, 5, 6)
+dbinom(x, 6, 0.3)
+pbinom(q=2, size=6, prob=0.3)
+pbinom(q=4, size=6, prob=0.3) - pbinom(q=1, size=6, prob=0.3)
+
+# Question 5
+pnorm(q = 14, mean = 11, sd = 4) - pnorm(q = 9, mean = 11, sd = 4)
+1 - pnorm(q = 19, mean = 11, sd = 4)
+qnorm(p = .85, mean = 11, sd = 4)
+
+# Question 6
+1 - pnorm(q = 105, mean = 108, sd = 2)
+zsum.test(mean.x=108, sigma.x=2, n.x=49, mu=108, alternative = "two.sided", conf.level=0.92)
+
+# Question 7
+data7 <- read.csv("Prob7.csv")
+x1 <- data7$SampleData
+
+ad.test(x1)
+qqPlot(x1)
+
+t.test(x1, mu=82, alternative = "less", conf.level = 0.95)
+t.test(x1, mu=82, alternative = "two.sided", conf.level = 0.96)
+
+# Question 8
+data8 <- read.csv("Prob8.csv")
+x2 <- data8$SampleData
+
+ad.test(x2)
+qqPlot(x2)
+
+(abs(mean(x2)) - abs(median(x2))) / abs(mean(x2))
+wilcox.test(x=x2, md=8.5, alternative = "two.sided", conf.level = 0.95)
+
+# Question 9
+data91 <- c(211,232,220,230,224,241,316)
+data92 <- c(125,137,126,265,173,179,146,155,147)
+
+shapiro.test(data91)
+qqPlot(data91)
+
+ad.test(data92)
+qqPlot(data92)
+
+wilcox.test(x=data91,y=data92, md=0, alternative = "greater", conf.level = 0.95)
+
+# Question 10
+data10 <- read.csv("Prob10.csv")
+x3 <- data10$X
+y3 <- data10$Y
+model10<-lm(y3~x3)
+
+summary(model10)
+
+anova(model10)
+
+cor(x3,y3)
+
+# confint(model10, level = 0.94)
+
+predict(model10, newdata=data.frame(x3=1.25), level = 0.94, interval = "confidence")
+predict(model10, newdata=data.frame(x3=1.25), level = 0.94, interval = "predict")
+```
